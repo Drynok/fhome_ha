@@ -3,7 +3,7 @@
 This projet contains a draft of game of proximity back-end based on gRPC service. 
 
 ### Folder structure
-1. `/packages` - contains 
+1. `/packages` - contains
 2. `/env` - environment variables
 3. `/handlers` - HTTP handlers
 4. `/libraries` - wrappers for third-party integartions like Redis
@@ -13,18 +13,16 @@ This projet contains a draft of game of proximity back-end based on gRPC service
 1. Create `.env` file in the projet root with following content:
 
 ```bash
-SERVER_MODE=
+SERVER_MODE=release
 SERVER_PORT=5050
 ```
 
-1. To start the game back-end run
+1. To start the service run
 ```bash
 make up
 ```
 
-1. Open BloomRPC and import protos from `protos` folder
-
-1. Run neccesary handler.
+1. Open
 
 ### Doing development:
 1. Run unit tests:

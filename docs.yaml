@@ -1,0 +1,64 @@
+openapi: "3.0.3"
+info:
+  title: Feed API
+  description: Feed API suite.
+  version: v1
+servers:
+  - url: http://localhost:5050
+    description: Localhost
+paths:
+  /v1/feed:
+    post:
+      summary: 
+      description:
+      tags:
+        - feed
+      operationId: v1-feed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/feed"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+components:
+  schemas:
+    error:
+      properties:
+        message:
+          type: string
+        status:
+          type: integer
+      type: object
+    feed:
+      properties:
+        value:
+          type: string
+        timestamp:
+          type: string
+      type: object

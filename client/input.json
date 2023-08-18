@@ -1,0 +1,14 @@
+[
+    {
+    "timestamp": "timestamp1",
+    "value": "A"
+    },
+    {
+    "timestamp": "timestamp2",
+    "value": "B"
+    },
+    {
+    "timestamp": "timestamp3",
+    "value": "C"
+    }
+]

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Drynok/fhome_ha/env"
+	"github.com/Drynok/fhome_ha/handlers"
 	"github.com/Drynok/fhome_ha/packages/container"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -16,13 +17,15 @@ import (
 )
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	ctr, err := container.New()
 
 	if err != nil {
 		log.Panic(err)
 	}
 
-	_ := context.Background()
+	ctx := context.Background()
 
 	err = ctr.Invoke(func(env *env.Environment) {
 		gin.SetMode(env.ServerMode)
@@ -42,11 +45,14 @@ func main() {
 			},
 			MaxAge: 12 * time.Hour,
 		}))
-		// rtr.NoRoute(NotFound())
 
-		// if _, err := handlers.NewGroup(ctx, ctr, rtr); err != nil {
-		// 	log.Panic(err)
-		// }
+		rtr.NoRoute(func(c *gin.Context) {
+			c.JSON(404, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
+		})
+
+		if _, err := handlers.NewRouterGroup(ctx, ctr, rtr); err != nil {
+			log.Panic(err)
+		}
 
 		srv := &http.Server{
 			Addr:              fmt.Sprintf(":%s", env.ServerPort),

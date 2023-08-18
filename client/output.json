@@ -1,0 +1,14 @@
+[
+    {
+    "id": "id1",
+    "processedMessages": 13
+    },
+    {
+    "id": "id2",
+    "processedMessages": 0
+    },
+    {
+    "id": "id3",
+    "processedMessages": 500
+    }
+]
