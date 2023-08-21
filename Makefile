@@ -1,4 +1,4 @@
-.PHONY: up down build test protos
+.PHONY: up down build test
 
 up:
 	docker-compose up -d
