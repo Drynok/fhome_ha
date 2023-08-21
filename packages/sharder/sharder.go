@@ -30,6 +30,7 @@ func (j *JsonSharder) Shard(inputJSON string, numShards int) ([]Shard, error) {
 	}
 
 	shards := make([]Shard, numShards)
+
 	for i := 0; i < len(data); i++ {
 		shardIndex := i % numShards
 		shards[shardIndex].ID = shardIndex
