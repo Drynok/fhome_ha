@@ -3,6 +3,7 @@ package container
 
 import (
 	"github.com/Drynok/fhome_ha/env"
+	srd "github.com/Drynok/fhome_ha/packages/sharder"
 
 	"go.uber.org/dig"
 )
@@ -13,6 +14,7 @@ func New() (*dig.Container, error) {
 
 	for _, err := range []error{
 		cnt.Provide(env.New),
+		cnt.Provide(srd.New),
 	} {
 		if err != nil {
 			return nil, err
