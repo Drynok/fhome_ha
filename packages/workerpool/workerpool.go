@@ -58,7 +58,7 @@ func (p *WorkerPool) GetStats() []Worker {
 	return p.Workers
 }
 
-func (p *WorkerPool) Submit() {
+func (p *WorkerPool) Submit(tsk TaskHandler) {
 
 }
 

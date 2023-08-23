@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/Drynok/fhome_ha/packages/sharder"
+	wp "github.com/Drynok/fhome_ha/packages/workerpool"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/dig"
 )
@@ -53,7 +54,9 @@ func NewHandler(ctx context.Context, p *Params, wpl wp.WorkerPool) gin.HandlerFu
 		}
 
 		for _, shd := range sds {
-
+			if len(shd.Values) > 0 {
+				// wpl.Submit()
+			}
 		}
 
 		c.Status(http.StatusOK)

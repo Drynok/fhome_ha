@@ -13,7 +13,7 @@ import (
 )
 
 // NewRouterGroup creates new router group.
-func NewRouterGroup(ctx context.Context, con *dig.Container, rtr *gin.Engine, wrp wp.Pool) (*gin.RouterGroup, error) {
+func NewRouterGroup(ctx context.Context, con *dig.Container, rtr *gin.Engine, wpl wp.WorkerPool) (*gin.RouterGroup, error) {
 	grp := rtr.Group("/v1")
 
 	for _, err := range []error{
@@ -35,7 +35,7 @@ func NewRouterGroup(ctx context.Context, con *dig.Container, rtr *gin.Engine, wr
 			// - exposes an HTTP endpoint (/history) which returns a list of
 			// worker identifiers and the number of processed messages for
 			// each worker
-			grp.POST("/feed", feed.NewHandler(ctx, &prm))
+			grp.POST("/feed", feed.NewHandler(ctx, &prm, wpl))
 		}),
 
 		con.Invoke(func(prm history.Params) {
@@ -43,7 +43,7 @@ func NewRouterGroup(ctx context.Context, con *dig.Container, rtr *gin.Engine, wr
 			// worker identifiers and the number of processed messages for
 			// each worker
 			// gin.BasicAuth(gin.Accounts{"admin": "secret"})
-			grp.GET("/history", history.NewHandler(ctx, &prm, wrp))
+			grp.GET("/history", history.NewHandler(ctx, &prm, wpl))
 		}),
 	} {
 		if err != nil {
