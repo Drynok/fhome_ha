@@ -35,12 +35,15 @@ func main() {
 
 	// Dependency injection.
 	err = ctr.Invoke(func(env *env.Environment) {
-		// Init data channel.
-		dch := make(chan string)
-		defer close(dch)
-
 		// Init pool of workers.
-		wrp := wp.NewPool(3, 5)
+		wrp, err := wp.NewWorkerPool(3, 5)
+
+		if err != nil {
+			log.Panic("worker pool error", err)
+		}
+
+		wrp.Start()
+		defer wrp.Stop()
 
 		gin.SetMode(env.ServerMode)
 		rtr := gin.New()
@@ -92,10 +95,10 @@ func main() {
 		// kill signals.
 		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 		<-quit
-		log.Println("Shutdown Server ...")
+		log.Println("shutdown Server ...")
 
 		if err := srv.Shutdown(ctx); err != nil {
-			log.Panic("Server Shutdown:", err)
+			log.Panic("server Shutdown:", err)
 		}
 
 		// catching ctx.Done().
@@ -103,7 +106,7 @@ func main() {
 		case <-ctx.Done():
 			log.Println("timeout of 5 seconds.")
 		}
-		log.Println("Server exiting")
+		log.Println("server exiting")
 	})
 
 	if err != nil {

@@ -17,14 +17,14 @@ type Params struct {
 	dig.In
 }
 
-// Model
+// Model for input json.
 type Model struct {
 	Value     string `json:"value" binding:"required,min=1,max=255`
 	Timestamp string `json:"timestamp" binding:"required,min=1,max=255"`
 }
 
 // NewHandler creates new HTTP handler.
-func NewHandler(ctx context.Context, p *Params) gin.HandlerFunc {
+func NewHandler(ctx context.Context, p *Params, wpl wp.WorkerPool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var data []Model
 
@@ -52,12 +52,8 @@ func NewHandler(ctx context.Context, p *Params) gin.HandlerFunc {
 			return
 		}
 
-		log.Println("%v", data)
-		log.Println("%v", sds)
-
 		for _, shd := range sds {
-			log.Println("%v", shd)
-			_ = shd
+
 		}
 
 		c.Status(http.StatusOK)
