@@ -1,4 +1,4 @@
-# Futurehome backend software engineer home assignment.
+# Futurehome. BSE Home Assignment.
 
 Task definition:
 
@@ -23,11 +23,11 @@ worker identifiers and the number of processed messages for
 each worker
 
 ### Folder structure
-1. `/packages` - contains 
+1. `/packages` - contains utilities, dependecy injections and neccesary package for the app.
 2. `/env` - contains configuration for environment variables.
 3. `/handlers` - holds HTTP handlers.
 5. `/client` - contains HTTP client and input for testing.
-6. `/middleware` - contains middleware.
+6. `/middleware` - contains middlewares.
 
 ### Getting started:
 
@@ -59,11 +59,10 @@ make down
 go test ./... -v
 ```
 
-1. You can find `Swagger API` documentation in `docs.yaml``.
-
-
 1. Linting. Install `golangci-lint` [installed](https://golangci-lint.run/usage/install/). After that you can run:
 
    ```bash
    golangci-lint run
    ```
+# Swagger and API documentation
+You can find `Swagger API` documentation in `docs.yaml``.
