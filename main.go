@@ -5,11 +5,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/Drynok/fhome_ha/env"
 	"github.com/Drynok/fhome_ha/handlers"
 	"github.com/Drynok/fhome_ha/packages/container"
+	wp "github.com/Drynok/fhome_ha/packages/workerpool"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/net/http2"
@@ -26,21 +30,27 @@ func main() {
 		log.Panic(err)
 	}
 
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	// Dependency injection.
 	err = ctr.Invoke(func(env *env.Environment) {
-		// Init pool of workers
+		// Init data channel.
+		dch := make(chan string)
+		defer close(dch)
 
-		// Run idle pool of workers.
+		// Init pool of workers.
+		wrp := wp.NewPool(3, 5)
 
 		gin.SetMode(env.ServerMode)
-
 		rtr := gin.New()
+
+		//
 		rtr.Use(gin.Recovery())
+		//
 		rtr.Use(gin.Logger())
 
-		// CORS settings.
+		// CORS policies.
 		rtr.Use(cors.New(cors.Config{
 			AllowOrigins:     []string{"*"},
 			AllowMethods:     []string{"GET", "POST"},
@@ -53,13 +63,13 @@ func main() {
 			MaxAge: 12 * time.Hour,
 		}))
 
-		// 404
+		// 404 route.
 		rtr.NoRoute(func(c *gin.Context) {
 			c.JSON(404, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
 		})
 
-		// Init router.
-		if _, err := handlers.NewRouterGroup(ctx, ctr, rtr); err != nil {
+		// Init group of endpoints.
+		if _, err := handlers.NewRouterGroup(ctx, ctr, rtr, *wrp); err != nil {
 			log.Panic(err)
 		}
 
@@ -76,6 +86,24 @@ func main() {
 				log.Panic(err)
 			}
 		}()
+
+		// Gracefully shutdown of server.
+		quit := make(chan os.Signal)
+		// kill signals.
+		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+		<-quit
+		log.Println("Shutdown Server ...")
+
+		if err := srv.Shutdown(ctx); err != nil {
+			log.Panic("Server Shutdown:", err)
+		}
+
+		// catching ctx.Done().
+		select {
+		case <-ctx.Done():
+			log.Println("timeout of 5 seconds.")
+		}
+		log.Println("Server exiting")
 	})
 
 	if err != nil {

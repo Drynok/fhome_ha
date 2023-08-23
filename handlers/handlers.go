@@ -1,4 +1,4 @@
-// TODO
+// Package handlers
 package handlers
 
 import (
@@ -7,12 +7,13 @@ import (
 
 	"github.com/Drynok/fhome_ha/handlers/feed"
 	"github.com/Drynok/fhome_ha/handlers/history"
+	wp "github.com/Drynok/fhome_ha/packages/workerpool"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/dig"
 )
 
 // NewRouterGroup creates new router group.
-func NewRouterGroup(ctx context.Context, con *dig.Container, rtr *gin.Engine) (*gin.RouterGroup, error) {
+func NewRouterGroup(ctx context.Context, con *dig.Container, rtr *gin.Engine, wrp wp.Pool) (*gin.RouterGroup, error) {
 	grp := rtr.Group("/v1")
 
 	for _, err := range []error{
@@ -34,18 +35,16 @@ func NewRouterGroup(ctx context.Context, con *dig.Container, rtr *gin.Engine) (*
 			// - exposes an HTTP endpoint (/history) which returns a list of
 			// worker identifiers and the number of processed messages for
 			// each worker
-			grp.GET("/feed", feed.NewHandler(ctx, &prm))
+			grp.POST("/feed", feed.NewHandler(ctx, &prm))
 		}),
 
 		con.Invoke(func(prm history.Params) {
 			// - exposes an HTTP endpoint (/history) which returns a list of
 			// worker identifiers and the number of processed messages for
 			// each worker
-			grp.GET("/history", gin.BasicAuth(gin.Accounts{
-				"admin": "secret"}), history.NewHandler(ctx, &prm))
+			// gin.BasicAuth(gin.Accounts{"admin": "secret"})
+			grp.GET("/history", history.NewHandler(ctx, &prm, wrp))
 		}),
-
-		// r.POST("/login", auth.LoginHandler)
 	} {
 		if err != nil {
 			log.Println(err, "there is a problem creating a router group")

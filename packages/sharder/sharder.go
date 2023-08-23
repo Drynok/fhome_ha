@@ -1,46 +1,22 @@
-// Package shareder shards JSON into parts for later processing.
+// Package sharder splits input JSON into parts.
 package sharder
 
-import (
-	"encoding/json"
-)
+// TODO: make dependency injectable
 
-// Sharder
-type Sharder interface {
-	Shard(string, int) ([]Shard, error)
-}
-
-// Shard
-type Shard struct {
+// ShardItem
+type ShardItem[T any] struct {
 	ID     int
-	Values []string
+	Values []T
 }
 
-// JsonSharder
-type JsonSharder struct {
-}
+func Shard[T any](list []T, numShards int) ([]ShardItem[T], error) {
+	shards := make([]ShardItem[T], numShards)
 
-// Shard method ...
-func (j *JsonSharder) Shard(inputJSON string, numShards int) ([]Shard, error) {
-	var data []string
-
-	err := json.Unmarshal([]byte(inputJSON), &data)
-	if err != nil {
-		return nil, err
-	}
-
-	shards := make([]Shard, numShards)
-
-	for i := 0; i < len(data); i++ {
+	for i, item := range list {
 		shardIndex := i % numShards
 		shards[shardIndex].ID = shardIndex
-		shards[shardIndex].Values = append(shards[shardIndex].Values, data[i])
+		shards[shardIndex].Values = append(shards[shardIndex].Values, item)
 	}
 
 	return shards, nil
-}
-
-// New function is constructor for json sharder.
-func New() Sharder {
-	return &JsonSharder{}
 }

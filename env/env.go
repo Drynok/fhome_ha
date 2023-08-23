@@ -12,7 +12,7 @@ import (
 
 // Environment environment variables configuration.
 type Environment struct {
-	ServerMode string `env:SERVER_MODE,default=`
+	ServerMode string `env:SERVER_MODE,default=release`
 	ServerPort string `env:"SERVER_PORT,default=5050"`
 }
 
