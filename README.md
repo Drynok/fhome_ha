@@ -1,7 +1,5 @@
 # Futurehome backend software engineer home assignment.
 
-This projet implements a HTTP server with worker pool to spread the load.
-
 Task definition:
 
 For your home assignment, we want you to build a Go web server that
@@ -62,3 +60,10 @@ go test ./... -v
 ```
 
 1. You can find `Swagger API` documentation in `docs.yaml``.
+
+
+1. Linting. Install `golangci-lint` [installed](https://golangci-lint.run/usage/install/). After that you can run:
+
+   ```bash
+   golangci-lint run
+   ```
