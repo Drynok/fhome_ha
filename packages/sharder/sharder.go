@@ -3,12 +3,13 @@ package sharder
 
 // TODO: make dependency injectable
 
-// ShardItem
+// ShardItem struct repsents shard element.
 type ShardItem[T any] struct {
 	ID     int
 	Values []T
 }
 
+// Shard function splits a collection into pices.
 func Shard[T any](list []T, numShards int) ([]ShardItem[T], error) {
 	shards := make([]ShardItem[T], numShards)
 
